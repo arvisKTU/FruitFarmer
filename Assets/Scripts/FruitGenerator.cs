@@ -5,83 +5,84 @@ using UnityEngine.VFX;
 
 public class FruitGenerator : MonoBehaviour
 {
-    public GameObject blueberry;
-    public GameObject strawberry;
-    public GameObject peach;
-    private Vector3 spawnPos;
+    private const int Z_POSITION = 0;
+    private const int DIRECTIONS_COUNT = 2;
+    public float spawnRate;
+    private int count = 0;
+    private int startTime;
+    private int fruitVarietyCount;
+
     public GameObject blueberryBasket;
     public GameObject peachBasket;
     public GameObject strawberryBasket;
-    public float spawnRate;
     public float distanceFromBasket;
     public float distanceWithinBasket;
-    public int maxFruitsGenerated;
-    private int count = 0;
-
     public float distanceFromBorders;
 
-    // Start is called before the first frame update
+    private Vector3 spawnPos;
+    Vector3 stageDimensions;
+
+    private Vector3 zeroVector;
+
+    public FruitPooler[] fruitPools;
+
     void Start()
     {
-        InvokeRepeating("Spawn", 0, spawnRate);
-        spawnPos = new Vector3(0,0,0);
+        startTime = 0;
+        InvokeRepeating(nameof(Spawn), startTime, spawnRate);
+
+        fruitVarietyCount = 3;
+        zeroVector = new Vector3(0, 0, 0);
+        spawnPos = zeroVector;
+        stageDimensions = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, Z_POSITION));
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-    }
     void Spawn()
     {
-        Vector3 stageDimensions = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 0));
-        int fruitNumber = Random.Range(1, 4);
-        float xPosition = Random.Range(-Mathf.Abs(stageDimensions.x)+distanceFromBorders, Mathf.Abs(stageDimensions.x)-distanceFromBorders);
+        int fruitNumber = Random.Range(0, fruitVarietyCount);
+        SelectFruitToSpawn(fruitNumber);
+    }
+    private void SelectFruitToSpawn(int fruitNumber)
+    {
+            GameObject newFruit = fruitPools[fruitNumber].GetPooledFruit();
+            newFruit.transform.position = FindSpawnPosition();
+            newFruit.SetActive(true);
+            count++;
+    }
+    public Vector3 FindSpawnPosition()
+    {
+        float xPosition = Random.Range(-Mathf.Abs(stageDimensions.x) + distanceFromBorders, Mathf.Abs(stageDimensions.x) - distanceFromBorders);
         float yPosition = Random.Range(-Mathf.Abs(stageDimensions.y) + distanceFromBorders, Mathf.Abs(stageDimensions.y) - distanceFromBorders);
-        spawnPos = new Vector3(xPosition, yPosition,0);
-        if (Mathf.Abs(spawnPos.x - blueberryBasket.transform.position.x) <= distanceWithinBasket &&
-            (Mathf.Abs(spawnPos.y - blueberryBasket.transform.position.y) <= distanceWithinBasket))
+        spawnPos = new Vector3(xPosition, yPosition, Z_POSITION);
+        spawnPos = FindOtherSpawnPosition(xPosition, yPosition, spawnPos);
+        return spawnPos;
+    }
+    private Vector3 FindOtherSpawnPosition(float xPosition, float yPosition, Vector3 spawnPosPrevious)
+    {
+        Vector3 spawnPos;
+        if (Mathf.Abs(spawnPosPrevious.x - blueberryBasket.transform.position.x) <= distanceWithinBasket &&
+          (Mathf.Abs(spawnPosPrevious.y - blueberryBasket.transform.position.y) <= distanceWithinBasket))
         {
             xPosition = blueberryBasket.transform.position.x + distanceFromBasket;
-            spawnPos= new Vector3(xPosition, yPosition, 0);
+            spawnPos = new Vector3(xPosition, yPosition, Z_POSITION);
         }
-        else if (Mathf.Abs(spawnPos.x - peachBasket.transform.position.x) <= distanceWithinBasket &&
-           (Mathf.Abs(spawnPos.y - peachBasket.transform.position.y) <= distanceWithinBasket))
+        else if (Mathf.Abs(spawnPosPrevious.x - peachBasket.transform.position.x) <= distanceWithinBasket &&
+           (Mathf.Abs(spawnPosPrevious.y - peachBasket.transform.position.y) <= distanceWithinBasket))
         {
-            xPosition = Random.Range(0, 2) == 0 ? peachBasket.transform.position.x - distanceFromBasket : peachBasket.transform.position.x + distanceFromBasket;
-            spawnPos = new Vector3(xPosition, yPosition, 0);
+            xPosition = Random.Range(0, DIRECTIONS_COUNT) == 0 ? peachBasket.transform.position.x - distanceFromBasket : peachBasket.transform.position.x + distanceFromBasket;
+            spawnPos = new Vector3(xPosition, yPosition, Z_POSITION);
         }
-        else if (Mathf.Abs(spawnPos.x - strawberryBasket.transform.position.x) <= distanceWithinBasket &&
-           (Mathf.Abs(spawnPos.y - strawberryBasket.transform.position.y) <= distanceWithinBasket))
+        else if (Mathf.Abs(spawnPosPrevious.x - strawberryBasket.transform.position.x) <= distanceWithinBasket &&
+           (Mathf.Abs(spawnPosPrevious.y - strawberryBasket.transform.position.y) <= distanceWithinBasket))
         {
             xPosition = strawberryBasket.transform.position.x - distanceFromBasket;
-            spawnPos = new Vector3(xPosition, yPosition, 0);
+            spawnPos = new Vector3(xPosition, yPosition, Z_POSITION);
         }
-
-        switch (fruitNumber)
+        else
         {
-            case 1:
-                if (count < maxFruitsGenerated)
-                {
-                    Instantiate(blueberry, spawnPos, Quaternion.identity);
-                    count++;
-                }
-                break;
-
-            case 2:
-                if (count < maxFruitsGenerated)
-                {
-                    Instantiate(peach, spawnPos, Quaternion.identity);
-                    count++;
-                }
-                break;
-            case 3:
-                if (count < maxFruitsGenerated)
-                {
-                    Instantiate(strawberry, spawnPos, Quaternion.identity);
-                    count++;
-                }
-                break;
+            spawnPos = spawnPosPrevious;
         }
+        return spawnPos;
     }
     public void CountDecrease()
     {

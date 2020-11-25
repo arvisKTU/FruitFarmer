@@ -6,31 +6,35 @@ using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
-    public Slider slider;
-    public GameObject winMenu;
-    public bool canDrag;
+    private const string MAIN_SCENE = "FruitFarmer";
 
-    //public string mainMenuLevel;
+    public GameObject progressBar;
+    public GameObject winMenu;
+    public static GameManager instance;
+    public bool gameEnded;
+    public FruitGenerator fruitGenerator;
+
     private void Start()
     {
-        canDrag = true;
+        gameEnded = false;
+        progressBar.SetActive(true);
         winMenu.gameObject.SetActive(false);
-        slider.gameObject.SetActive(true);
     }
+
     public void EndGame()
     {
-        slider.gameObject.SetActive(false);
-        canDrag = false;
+        gameEnded = true;
+        progressBar.SetActive(false);
         winMenu.gameObject.SetActive(true);
-        Time.timeScale = 0;
+        fruitGenerator.CancelInvoke();
     }
+
     public void Restart()
     {
-        canDrag = true;
-        Time.timeScale = 1;
+        gameEnded =  false;
+        progressBar.SetActive(true);
         winMenu.gameObject.SetActive(false);
-        slider.gameObject.SetActive(true);
-        SceneManager.LoadScene("FruitFarmer");
+        SceneManager.LoadScene(MAIN_SCENE);
     }
 
 }

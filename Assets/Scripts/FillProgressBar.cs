@@ -7,25 +7,25 @@ public class FillProgressBar : MonoBehaviour
 {
     // Start is called before the first frame update
 
-    private Slider slider;
+    public Image mask;
     private int fruits;
     public int maxFruits;
+    private const string LEVEL_COMPLETED_CLIP_NAME = "level_completed";
 
     public GameManager gameManager;
 
     public void Start()
     {
-        slider = GetComponent<Slider>();
-        slider.value = 0;
-        slider.maxValue = maxFruits;
+        mask.fillAmount = 0;
     }
     public void AddFruit()
     {
         fruits++;
-        slider.value = fruits;
+        float fillAmount = (float)fruits / (float)maxFruits;
+        mask.fillAmount = fillAmount;
         if(fruits==maxFruits)
         {
-            SoundManager.PlaySound("level_completed");
+            SoundManager.PlaySound(LEVEL_COMPLETED_CLIP_NAME);
             gameManager.EndGame();
         }
     }

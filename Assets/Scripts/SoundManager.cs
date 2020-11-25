@@ -4,31 +4,29 @@ using UnityEngine;
 
 public class SoundManager : MonoBehaviour
 {
-    // Start is called before the first frame update
+    private const string PUT_INTO_BASKET_CLIP_NAME = "put_into_basket";
+    private const string LEVEL_COMPLETED_CLIP_NAME = "level_completed";
+
     public static AudioClip putInBasket, levelCompleted;
     static AudioSource audioSrc;
+
     void Start()
     {
-        putInBasket = Resources.Load<AudioClip>("put_into_basket");
-        levelCompleted = Resources.Load<AudioClip>("level_completed");
+        putInBasket = Resources.Load<AudioClip>(PUT_INTO_BASKET_CLIP_NAME);
+        levelCompleted = Resources.Load<AudioClip>(LEVEL_COMPLETED_CLIP_NAME);
 
         audioSrc = GetComponent<AudioSource> ();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
     public static void PlaySound(string clip)
     {
         switch(clip)
         {
-            case "put_into_basket":
+            case PUT_INTO_BASKET_CLIP_NAME:
                 audioSrc.PlayOneShot(putInBasket);
                 break;
 
-            case "level_completed":
+            case LEVEL_COMPLETED_CLIP_NAME:
                 audioSrc.PlayOneShot(levelCompleted);
                 break;
         }
