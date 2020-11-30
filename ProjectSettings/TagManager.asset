@@ -4,12 +4,7 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - AppleBox
-  - PearBox
-  - PineappleBox
-  - Apple
-  - Pear
-  - Pineapple
+  - Shootable
   layers:
   - Default
   - TransparentFX
@@ -19,9 +14,9 @@ TagManager:
   - UI
   - 
   - 
-  - 
-  - 
-  - 
+  - Lighting
+  - Ground
+  - Postprocessing
   - 
   - 
   - 
@@ -48,8 +43,8 @@ TagManager:
     uniqueID: 0
     locked: 0
   - name: Background
-    uniqueID: 3668783763
+    uniqueID: 3804908061
     locked: 0
   - name: Fruit
-    uniqueID: 1036187683
+    uniqueID: 75761271
     locked: 0

@@ -4,11 +4,12 @@ using UnityEngine;
 
 public class SoundManager : MonoBehaviour
 {
-    private const string PUT_INTO_BASKET_CLIP_NAME = "put_into_basket";
-    private const string LEVEL_COMPLETED_CLIP_NAME = "level_completed";
 
     public static AudioClip putInBasket, levelCompleted;
     static AudioSource audioSrc;
+
+    private const string PUT_INTO_BASKET_CLIP_NAME = "put_into_basket";
+    private const string LEVEL_COMPLETED_CLIP_NAME = "level_completed";
 
     void Start()
     {
@@ -32,4 +33,5 @@ public class SoundManager : MonoBehaviour
         }
 
     }
+
 }

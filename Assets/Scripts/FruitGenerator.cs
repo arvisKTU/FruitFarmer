@@ -5,26 +5,25 @@ using UnityEngine.VFX;
 
 public class FruitGenerator : MonoBehaviour
 {
-    private const int Z_POSITION = 0;
-    private const int DIRECTIONS_COUNT = 2;
-    public float spawnRate;
-    private int count = 0;
-    private int startTime;
-    private int fruitVarietyCount;
-
+    public GameObject blueberry;
+    public GameObject strawberry;
+    public GameObject peach;
     public GameObject blueberryBasket;
     public GameObject peachBasket;
     public GameObject strawberryBasket;
     public float distanceFromBasket;
     public float distanceWithinBasket;
     public float distanceFromBorders;
+    public float spawnRate;
+    public int maxFruitsToSpawn;
 
+    private const int Z_POSITION = 0;
+    private const int DIRECTIONS_COUNT = 2;
+    private int startTime;
+    private int fruitVarietyCount;
     private Vector3 spawnPos;
-    Vector3 stageDimensions;
-
+    private Vector3 stageDimensions;
     private Vector3 zeroVector;
-
-    public FruitPooler[] fruitPools;
 
     void Start()
     {
@@ -40,15 +39,34 @@ public class FruitGenerator : MonoBehaviour
     void Spawn()
     {
         int fruitNumber = Random.Range(0, fruitVarietyCount);
-        SelectFruitToSpawn(fruitNumber);
+        spawnPos = FindSpawnPosition();
+        SelectFruitToSpawn(fruitNumber,spawnPos);
     }
-    private void SelectFruitToSpawn(int fruitNumber)
+
+    private void SelectFruitToSpawn(int fruitNumber,Vector3 spawnPos)
     {
-            GameObject newFruit = fruitPools[fruitNumber].GetPooledFruit();
-            newFruit.transform.position = FindSpawnPosition();
-            newFruit.SetActive(true);
-            count++;
+        if (GameManager.instance.count < maxFruitsToSpawn)
+        {
+            switch (fruitNumber)
+            {
+                case 0:
+                    Instantiate(blueberry, spawnPos, Quaternion.identity);
+                    GameManager.instance.CountIncrease();
+                break;
+
+                case 1:
+                    Instantiate(peach, spawnPos, Quaternion.identity);
+                    GameManager.instance.CountIncrease();
+                break;
+
+                case 2:
+                    Instantiate(strawberry, spawnPos, Quaternion.identity);
+                    GameManager.instance.CountIncrease();
+                break;
+            }
+        }
     }
+
     public Vector3 FindSpawnPosition()
     {
         float xPosition = Random.Range(-Mathf.Abs(stageDimensions.x) + distanceFromBorders, Mathf.Abs(stageDimensions.x) - distanceFromBorders);
@@ -57,9 +75,11 @@ public class FruitGenerator : MonoBehaviour
         spawnPos = FindOtherSpawnPosition(xPosition, yPosition, spawnPos);
         return spawnPos;
     }
+
     private Vector3 FindOtherSpawnPosition(float xPosition, float yPosition, Vector3 spawnPosPrevious)
     {
         Vector3 spawnPos;
+
         if (Mathf.Abs(spawnPosPrevious.x - blueberryBasket.transform.position.x) <= distanceWithinBasket &&
           (Mathf.Abs(spawnPosPrevious.y - blueberryBasket.transform.position.y) <= distanceWithinBasket))
         {
@@ -69,7 +89,8 @@ public class FruitGenerator : MonoBehaviour
         else if (Mathf.Abs(spawnPosPrevious.x - peachBasket.transform.position.x) <= distanceWithinBasket &&
            (Mathf.Abs(spawnPosPrevious.y - peachBasket.transform.position.y) <= distanceWithinBasket))
         {
-            xPosition = Random.Range(0, DIRECTIONS_COUNT) == 0 ? peachBasket.transform.position.x - distanceFromBasket : peachBasket.transform.position.x + distanceFromBasket;
+            xPosition = Random.Range(0, DIRECTIONS_COUNT) ==
+                0 ? peachBasket.transform.position.x - distanceFromBasket : peachBasket.transform.position.x + distanceFromBasket;
             spawnPos = new Vector3(xPosition, yPosition, Z_POSITION);
         }
         else if (Mathf.Abs(spawnPosPrevious.x - strawberryBasket.transform.position.x) <= distanceWithinBasket &&
@@ -82,10 +103,7 @@ public class FruitGenerator : MonoBehaviour
         {
             spawnPos = spawnPosPrevious;
         }
+
         return spawnPos;
-    }
-    public void CountDecrease()
-    {
-        count--;
     }
 }
