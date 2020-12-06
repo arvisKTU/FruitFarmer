@@ -5,7 +5,7 @@ using UnityEngine;
 public class SoundManager : MonoBehaviour
 {
 
-    public static AudioClip putInBasket, levelCompleted;
+    public static AudioClip putIntoBasket, levelCompleted;
     static AudioSource audioSrc;
 
     private const string PUT_INTO_BASKET_CLIP_NAME = "put_into_basket";
@@ -13,7 +13,7 @@ public class SoundManager : MonoBehaviour
 
     void Start()
     {
-        putInBasket = Resources.Load<AudioClip>(PUT_INTO_BASKET_CLIP_NAME);
+        putIntoBasket = Resources.Load<AudioClip>(PUT_INTO_BASKET_CLIP_NAME);
         levelCompleted = Resources.Load<AudioClip>(LEVEL_COMPLETED_CLIP_NAME);
 
         audioSrc = GetComponent<AudioSource> ();
@@ -24,7 +24,7 @@ public class SoundManager : MonoBehaviour
         switch(clip)
         {
             case PUT_INTO_BASKET_CLIP_NAME:
-                audioSrc.PlayOneShot(putInBasket);
+                audioSrc.PlayOneShot(putIntoBasket);
                 break;
 
             case LEVEL_COMPLETED_CLIP_NAME:

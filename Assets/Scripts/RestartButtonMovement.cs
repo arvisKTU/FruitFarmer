@@ -9,39 +9,37 @@ public class RestartButtonMovement : MonoBehaviour
     public GameObject restartButton;
     public Button restart;
 
-    private Vector3 initialPos;
-    private Vector3 startPosition;
-    private float startXPosition;
-    private float startYPosition;
-    private float moveSpeed;
-    private float moveDelay;
+    private Vector3 finalPosition;
+    private Vector3 initialPosition;
+    private float initialXPosition;
+    private float initialYPosition;
+    private float speed;
 
     void Start()
     {
         restart.interactable = false;
-        startXPosition = 100f;
-        startYPosition = 0f;
-        moveDelay = 2f;
-        moveSpeed = 2000f;
-        initialPos = restartButton.transform.position;
+        initialXPosition = 100f;
+        initialYPosition = 0f;
+        speed = 2000f;
+        finalPosition = restartButton.transform.position;
 
-        startPosition = new Vector3(startXPosition, startYPosition, 0);
-        restartButton.transform.position = startPosition;
+        initialPosition = new Vector3(initialXPosition, initialYPosition, 0);
+        restartButton.transform.position = initialPosition;
         restartButton.SetActive(false);
 
     }
 
     void Update()
     {
-        Invoke(nameof(MoveRestartButton), moveDelay);
+        MoveRestartButton();
     }
 
     private void MoveRestartButton()
     {
         restartButton.SetActive(true);
-        startPosition = Vector3.MoveTowards(startPosition, initialPos, moveSpeed * Time.deltaTime);
-        restartButton.transform.position = startPosition;
-        if(initialPos==restartButton.transform.position)
+        initialPosition = Vector3.MoveTowards(initialPosition, finalPosition, speed * Time.deltaTime);
+        restartButton.transform.position = initialPosition;
+        if (finalPosition==restartButton.transform.position)
         {
             restart.interactable = true;
         }

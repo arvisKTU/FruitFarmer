@@ -27,7 +27,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1914558631227771348}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -7, y: -55.6, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.7, y: 0.70000005, z: 0.7}
   m_Children: []
   m_Father: {fileID: 0}
@@ -95,20 +95,42 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 868d5d308448cb343ac227cbb6629afc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  correctBasket: {fileID: 5825121599348613481, guid: 15e20df041ecc4d429a564822019969d,
+  correctBasket: {fileID: 1392281946654176408, guid: 15e20df041ecc4d429a564822019969d,
     type: 3}
   wrongBaskets:
-  - {fileID: 9070928409409853580, guid: 26387a1e009eb3a47be3489dacbba364, type: 3}
-  - {fileID: 7721471591761149618, guid: 322c157ec38b2fa4f8acf750dd6f7bf7, type: 3}
-  distanceWithinBasket: 2.8
-  generator: {fileID: 7203479703183658630, guid: 96b1185dbcfd7c147be3c68f546c6f67,
-    type: 3}
+  - {fileID: 6481895243833893274, guid: 322c157ec38b2fa4f8acf750dd6f7bf7, type: 3}
+  - {fileID: 8404008995269181417, guid: 26387a1e009eb3a47be3489dacbba364, type: 3}
+  maxDistanceWithinBasket: 2.8
   fruitClickParticles: {fileID: 8588012511856332117, guid: cdb520623fca69f44abede1740312499,
     type: 3}
-  wrongParticles: {fileID: 4303837685617752006, guid: c3c9f0661459dd240b05859636442571,
+  wrongParticles: {fileID: 7347759511057818492, guid: c3c9f0661459dd240b05859636442571,
     type: 3}
-  correctParticles: {fileID: 8179796703620248926, guid: 1beaae203b7e85b4aac03eabda1dc827,
+  correctParticles: {fileID: 1281952252637853604, guid: 1beaae203b7e85b4aac03eabda1dc827,
     type: 3}
+  returnFruitToInitialPos:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 2
+      outSlope: 2
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!61 &1914558631227771349
 BoxCollider2D:
   m_ObjectHideFlags: 0

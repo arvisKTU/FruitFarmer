@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -12,14 +13,15 @@ public class GameManager : MonoBehaviour
     public GameObject progressBar;
     public GameObject winMenu;
     public bool gameEnded;
-    public int count;
+    public int generatedFruitCount;
     public FruitGenerator fruitGenerator;
     public int maxFruits;
 
-    private int fruits;
+    private int fruitCount;
     private const string LEVEL_COMPLETED_CLIP_NAME = "level_completed";
+    private const string PUT_INTO_BASKET_CLIP_NAME = "put_into_basket";
     private const string MAIN_SCENE                = "FruitFarmer";
-    private const float WIN_SCREEN_DELAY = 1f;
+    private const float WIN_SCREEN_DELAY           = 1f;
 
     private void Awake()
     {
@@ -28,11 +30,26 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        count++;
+        generatedFruitCount++;
         mask.fillAmount = 0f;
         gameEnded = false;
         progressBar.SetActive(true);
         winMenu.gameObject.SetActive(false);
+    }
+
+
+    public void AddFruit()
+    {
+        SoundManager.PlaySound(PUT_INTO_BASKET_CLIP_NAME);
+        CountDecrease();
+        fruitCount++;
+        float fillAmount = (float)fruitCount / (float)maxFruits;
+        mask.fillAmount = fillAmount;
+        if (fruitCount == maxFruits)
+        {
+            SoundManager.PlaySound(LEVEL_COMPLETED_CLIP_NAME);
+            EndGame();
+        }
     }
 
     public void EndGame()
@@ -57,26 +74,14 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene(MAIN_SCENE);
     }
 
-    public void AddFruit()
-    {
-        fruits++;
-        float fillAmount = (float)fruits / (float)maxFruits;
-        mask.fillAmount = fillAmount;
-        if (fruits == maxFruits)
-        {
-            SoundManager.PlaySound(LEVEL_COMPLETED_CLIP_NAME);
-            EndGame();
-        }
-    }
-
     public void CountDecrease()
     {
-        count--;
+        generatedFruitCount--;
     }
 
     public void CountIncrease()
     {
-        count++;
+        generatedFruitCount++;
     }
 
 
