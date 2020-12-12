@@ -3,18 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FruitDragAndDrop : MonoBehaviour
+public class Fruit : MonoBehaviour
 {
-    public GameObject correctBasket;
-    public GameObject[] wrongBaskets;
-    public float maxDistanceWithinBasket;
+    public FruitData data;
 
-    public GameObject fruitClickParticles;
-    public GameObject wrongParticles;
-    public GameObject correctParticles;
-
-    [SerializeField]
-    private AnimationCurve returnFruitToInitialPos;
     private Vector3 screenPoint;
     private Camera mainCamera;
     private bool isDragging;
@@ -29,11 +21,13 @@ public class FruitDragAndDrop : MonoBehaviour
     private float returnTime;
     private Vector3 offset;
     private float maxVelocity;
+    private GameManager gm;
 
     public event Action OnFruitCollectedEvent;
 
     private void Start()
     {
+        gm = GameManager.instance;
         returnTime = 1f;
         maxVelocity = 100f;
         fruitInCorrectBasket = false;
@@ -76,32 +70,32 @@ public class FruitDragAndDrop : MonoBehaviour
 
     private void OnMouseDown()
     {
-        if (!GameManager.instance.gameEnded)
+        if (!gm.gameEnded)
         {
             isDragging = true;
             screenPoint = mainCamera.WorldToScreenPoint(gameObject.transform.position);
             offset = gameObject.transform.position - mainCamera.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, screenPoint.z));
 
-            GameObject _touchParticlesInstance = (GameObject)Instantiate(fruitClickParticles, transform.position, Quaternion.identity);
+            Instantiate(data.fruitClickParticles, transform.position, Quaternion.identity);
         }
     }
 
     private void OnMouseUp()
     {
         isDragging = false;
-        if (IsFruitInBasket(correctBasket))
+        if (IsFruitInBasket(data.correctBasket))
         {
             fruitInCorrectBasket = true;
             OnFruitCollectedEvent?.Invoke();
-            GameObject _correctParticlesInstance = (GameObject)Instantiate(correctParticles, transform.position, Quaternion.identity);
+            Instantiate(data.correctParticles, transform.position, Quaternion.identity);
         }
         else
         {
-            for (int i=0;i<wrongBaskets.Length;i++)
+            for (int i=0;i<gm.baskets.Length;i++)
             {
-                if (IsFruitInBasket(wrongBaskets[i]))
+                if (IsFruitInBasket(gm.baskets[i])&& (gm.baskets[i]!=data.correctBasket))
                 {
-                    GameObject _wrongParticlesInstance = (GameObject)Instantiate(wrongParticles, transform.position, Quaternion.identity);
+                    Instantiate(data.wrongParticles, transform.position, Quaternion.identity);
                 }
             }
         }
@@ -109,8 +103,8 @@ public class FruitDragAndDrop : MonoBehaviour
 
     private bool IsFruitInBasket(GameObject basket)
     {
-        return Mathf.Abs(transform.position.x - basket.transform.position.x) <= maxDistanceWithinBasket &&
-            (Mathf.Abs(transform.position.y - basket.transform.position.y) <= maxDistanceWithinBasket);
+        return Mathf.Abs(transform.position.x - basket.transform.position.x) <= data.maxDistanceWithinBasket &&
+            (Mathf.Abs(transform.position.y - basket.transform.position.y) <= data.maxDistanceWithinBasket);
     }
 
     private void ReturnToStartPos()
@@ -119,7 +113,7 @@ public class FruitDragAndDrop : MonoBehaviour
         Vector3 _currPos = transform.position;
         currTime += Time.deltaTime;
         float _fraction = currTime / returnTime;
-        float _velocity = returnFruitToInitialPos.Evaluate(_fraction) / maxVelocity;
+        float _velocity = data.returnFruitToInitialPos.Evaluate(_fraction) / maxVelocity;
         _currPos = Vector3.Lerp(_currPos, initialPos, _velocity);
         transform.position = _currPos;
 
@@ -127,12 +121,12 @@ public class FruitDragAndDrop : MonoBehaviour
 
     private void ShrinkFruit()
     {
-        if(transform.localScale.x<=0)
+        currentShrinkScale += scaleChangeSpeed;
+        transform.localScale = new Vector3(initialScale.x- currentShrinkScale, initialScale.y - currentShrinkScale, initialScale.z - currentShrinkScale);
+        if (transform.localScale.x <= 0)
         {
             Destroy(this.gameObject);
         }
-        currentShrinkScale += scaleChangeSpeed;
-        transform.localScale = new Vector3(initialScale.x- currentShrinkScale, initialScale.y - currentShrinkScale, initialScale.z - currentShrinkScale);
     }
 
     private void ExpandFruit()

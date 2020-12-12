@@ -606,6 +606,12 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 807973521}
   m_CullTransparentMesh: 0
+--- !u!1 &813263606 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8404008995269181417, guid: 26387a1e009eb3a47be3489dacbba364,
+    type: 3}
+  m_PrefabInstance: {fileID: 8404008996706543921}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1064782274
 GameObject:
   m_ObjectHideFlags: 0
@@ -932,7 +938,6 @@ GameObject:
   - component: {fileID: 1204008236}
   - component: {fileID: 1204008235}
   - component: {fileID: 1204008234}
-  - component: {fileID: 1204008237}
   m_Layer: 5
   m_Name: Restart
   m_TagString: Untagged
@@ -1050,18 +1055,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1204008232}
   m_CullTransparentMesh: 0
---- !u!114 &1204008237
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1204008232}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 04f143524b91b0c4d9bd3dac4962726c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1329644558
 GameObject:
   m_ObjectHideFlags: 0
@@ -1097,7 +1090,12 @@ MonoBehaviour:
   gameEnded: 1
   generatedFruitCount: 0
   fruitGenerator: {fileID: 1391825598}
-  maxFruits: 10
+  maxFruits: 1
+  baskets:
+  - {fileID: 1459908808}
+  - {fileID: 1523588879}
+  - {fileID: 813263606}
+  settings: {fileID: 0}
 --- !u!4 &1329644560
 Transform:
   m_ObjectHideFlags: 0
@@ -1208,6 +1206,12 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1465347400}
   m_CullTransparentMesh: 0
+--- !u!1 &1523588879 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1392281946654176408, guid: 15e20df041ecc4d429a564822019969d,
+    type: 3}
+  m_PrefabInstance: {fileID: 1392281945574429548}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1678935942
 GameObject:
   m_ObjectHideFlags: 0

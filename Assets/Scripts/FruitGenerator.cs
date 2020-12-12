@@ -5,13 +5,8 @@ using UnityEngine.VFX;
 
 public class FruitGenerator : MonoBehaviour
 {
-    public GameObject[] fruits;
-    public GameObject basket;
 
-    public float minDistanceFromBorders;
-    public float spawnRate;
-    public int maxFruitsToSpawn;
-    public float distanceFromBasketTop;
+    public GeneratorData data;
 
     private const int Z_POSITION = 0;
     private int startTime;
@@ -24,29 +19,29 @@ public class FruitGenerator : MonoBehaviour
     void Start()
     {
         startTime = 0;
-        InvokeRepeating(nameof(Spawn), startTime, spawnRate);
+        InvokeRepeating(nameof(SelectFruitToSpawn), startTime, data.spawnRate);
 
-        fruitVarietyCount = fruits.Length;
+        fruitVarietyCount = data.fruits.Length;
         zeroVector = new Vector3(0, 0, 0);
         spawnPos = zeroVector;
         stageDimensions = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, Z_POSITION));
 
-        yPositionOfBasketTop = basket.transform.position.y + basket.GetComponent<BoxCollider2D>().size.y;
+        yPositionOfBasketTop = data.basket.transform.position.y + data.basket.GetComponent<BoxCollider2D>().size.y;
     }
 
-    void Spawn()
+    void SelectFruitToSpawn()
     {
         int fruitNumber = Random.Range(0, fruitVarietyCount);
         spawnPos = FindSpawnPosition();
-        SelectFruitToSpawn(fruitNumber,spawnPos);
+        Spawn(fruitNumber,spawnPos);
     }
 
-    private void SelectFruitToSpawn(int fruitNumber,Vector3 spawnPos)
+    private void Spawn(int fruitNumber,Vector3 spawnPos)
     {
-        if (GameManager.instance.generatedFruitCount < maxFruitsToSpawn)
+        if (GameManager.instance.generatedFruitCount < data.maxFruitsToSpawn)
         {
-            var _fruit=Instantiate(fruits[fruitNumber], spawnPos, Quaternion.identity);
-            _fruit.GetComponent<FruitDragAndDrop>().OnFruitCollectedEvent += OnFruitCollected;
+            var _fruit=Instantiate(data.fruits[fruitNumber], spawnPos, Quaternion.identity);
+            _fruit.GetComponent<Fruit>().OnFruitCollectedEvent += OnFruitCollected;
             GameManager.instance.CountIncrease();
         }
     }
@@ -58,8 +53,8 @@ public class FruitGenerator : MonoBehaviour
 
     public Vector3 FindSpawnPosition()
     {
-        float xPosition = Random.Range(-Mathf.Abs(stageDimensions.x) + minDistanceFromBorders, Mathf.Abs(stageDimensions.x) - minDistanceFromBorders);
-        float yPosition = Random.Range(-Mathf.Abs(stageDimensions.y) + yPositionOfBasketTop + distanceFromBasketTop, Mathf.Abs(stageDimensions.y) - minDistanceFromBorders);
+        float xPosition = Random.Range(-Mathf.Abs(stageDimensions.x) + data.minDistanceFromBorders, Mathf.Abs(stageDimensions.x) - data.minDistanceFromBorders);
+        float yPosition = Random.Range(-Mathf.Abs(stageDimensions.y) + yPositionOfBasketTop + data.distanceFromBasketTop, Mathf.Abs(stageDimensions.y) - data.minDistanceFromBorders);
         spawnPos = new Vector3(xPosition, yPosition, Z_POSITION);
         return spawnPos;
     }

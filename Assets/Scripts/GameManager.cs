@@ -16,6 +16,7 @@ public class GameManager : MonoBehaviour
     public int generatedFruitCount;
     public FruitGenerator fruitGenerator;
     public int maxFruits;
+    public GameObject[] baskets;
 
     private int fruitCount;
     private const string LEVEL_COMPLETED_CLIP_NAME = "level_completed";
