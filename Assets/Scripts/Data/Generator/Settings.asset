@@ -12,9 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0016e7ade17540348a0a9cdb996edf1e, type: 3}
   m_Name: Settings
   m_EditorClassIdentifier: 
-  fruits: []
-  basket: {fileID: 0}
-  minDistanceFromBorders: 0
-  spawnRate: 0
-  maxFruitsToSpawn: 0
-  distanceFromBasketTop: 0
+  fruits:
+  - {fileID: 6139124653184522304, guid: 68b5cae450f7764499184872a6f649ff, type: 3}
+  - {fileID: 1914558631227771348, guid: 8637fdbefb50e1044896e45d1d1e5a2f, type: 3}
+  - {fileID: 6597026679254407008, guid: e1767f325b1355147821fdf3ed772bed, type: 3}
+  basket: {fileID: 6481895243833893274, guid: 322c157ec38b2fa4f8acf750dd6f7bf7, type: 3}
+  minDistanceFromBorders: 1.5
+  spawnRate: 1
+  maxFruitsToSpawn: 50
+  distanceFromBasketTop: 5.5
