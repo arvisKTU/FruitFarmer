@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Fruit : MonoBehaviour
@@ -21,13 +19,13 @@ public class Fruit : MonoBehaviour
     private float returnTime;
     private Vector3 offset;
     private float maxVelocity;
-    private GameManager gm;
+    private bool wentOutsideBasket;
 
-    public event Action OnFruitCollectedEvent;
+    public static event Action OnFruitCollectedEvent;
 
     private void Start()
     {
-        gm = GameManager.instance;
+        wentOutsideBasket = true;
         returnTime = 1f;
         maxVelocity = 100f;
         fruitInCorrectBasket = false;
@@ -56,6 +54,10 @@ public class Fruit : MonoBehaviour
         {
             ExpandFruit();
         }
+        if (!IsFruitInAnyBasket())
+        {
+            wentOutsideBasket = true;
+        }
     }
 
     private void OnMouseDrag()
@@ -70,7 +72,7 @@ public class Fruit : MonoBehaviour
 
     private void OnMouseDown()
     {
-        if (!gm.gameEnded)
+        if (!GameManager.gameEnded && !IsFruitInAnyBasket())
         {
             isDragging = true;
             screenPoint = mainCamera.WorldToScreenPoint(gameObject.transform.position);
@@ -83,25 +85,26 @@ public class Fruit : MonoBehaviour
     private void OnMouseUp()
     {
         isDragging = false;
-        if (IsFruitInBasket(data.correctBasket))
+        if (IsFruitInDefinedBasket(data.correctBasket)&& !fruitInCorrectBasket)
         {
             fruitInCorrectBasket = true;
             OnFruitCollectedEvent?.Invoke();
             Instantiate(data.correctParticles, transform.position, Quaternion.identity);
         }
-        else
+        else if(!IsFruitInDefinedBasket(data.correctBasket))
         {
-            for (int i=0;i<gm.baskets.Length;i++)
+            for (int i=0;i<GameManager.baskets.Length;i++)
             {
-                if (IsFruitInBasket(gm.baskets[i])&& (gm.baskets[i]!=data.correctBasket))
+                if (IsFruitInDefinedBasket(GameManager.baskets[i])&& (GameManager.baskets[i]!=data.correctBasket) && wentOutsideBasket)
                 {
                     Instantiate(data.wrongParticles, transform.position, Quaternion.identity);
+                    wentOutsideBasket = false;
                 }
             }
         }
     }
 
-    private bool IsFruitInBasket(GameObject basket)
+    private bool IsFruitInDefinedBasket(GameObject basket)
     {
         return Mathf.Abs(transform.position.x - basket.transform.position.x) <= data.maxDistanceWithinBasket &&
             (Mathf.Abs(transform.position.y - basket.transform.position.y) <= data.maxDistanceWithinBasket);
@@ -139,6 +142,28 @@ public class Fruit : MonoBehaviour
         else
         {
             isMaximized = true;
+        }
+    }
+
+    private bool IsFruitInAnyBasket()
+    {
+        float _count = 0;
+
+        for (int i = 0; i < GameManager.baskets.Length; i++)
+        {
+            if (IsFruitInDefinedBasket(GameManager.baskets[i]))
+            {
+                _count++;
+            }
+        }
+
+        if(_count>0)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
         }
     }
 }

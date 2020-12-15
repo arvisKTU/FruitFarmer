@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class SoundManager : MonoBehaviour
 {
-
-    public static AudioClip putIntoBasket, levelCompleted;
     static AudioSource audioSrc;
 
     private const string PUT_INTO_BASKET_CLIP_NAME = "put_into_basket";
     private const string LEVEL_COMPLETED_CLIP_NAME = "level_completed";
+    private const float AUDIO_SOURCE_STOP_DELAY = 2.7f;
+    private AudioClip putIntoBasket, levelCompleted, soundtrack;
 
     void Start()
     {
@@ -17,9 +17,24 @@ public class SoundManager : MonoBehaviour
         levelCompleted = Resources.Load<AudioClip>(LEVEL_COMPLETED_CLIP_NAME);
 
         audioSrc = GetComponent<AudioSource> ();
+
+        GameManager.OnWinEvent += HandleWin;
+        Fruit.OnFruitCollectedEvent += PlayCollectedFruitSound;
+        GameManager.OnRestartEvent += audioSrc.Play;
     }
 
-    public static void PlaySound(string clip)
+    private void HandleWin()
+    {
+        PlaySound(LEVEL_COMPLETED_CLIP_NAME);
+        Invoke(nameof(StopSounds), AUDIO_SOURCE_STOP_DELAY);
+    }
+
+    private void PlayCollectedFruitSound()
+    {
+        PlaySound(PUT_INTO_BASKET_CLIP_NAME);
+    }
+
+    private void PlaySound(string clip)
     {
         switch(clip)
         {
@@ -32,6 +47,11 @@ public class SoundManager : MonoBehaviour
                 break;
         }
 
+    }
+
+    private void StopSounds()
+    {
+        audioSrc.Stop();
     }
 
 }

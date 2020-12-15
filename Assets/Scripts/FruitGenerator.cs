@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.VFX;
+﻿using UnityEngine;
 
 public class FruitGenerator : MonoBehaviour
 {
@@ -9,6 +6,7 @@ public class FruitGenerator : MonoBehaviour
     public GeneratorData data;
 
     private const int Z_POSITION = 0;
+    private int generatedFruitCount;
     private int startTime;
     private int fruitVarietyCount;
     private Vector3 spawnPos;
@@ -19,7 +17,7 @@ public class FruitGenerator : MonoBehaviour
     void Start()
     {
         startTime = 0;
-        InvokeRepeating(nameof(SelectFruitToSpawn), startTime, data.spawnRate);
+        InvokeSpawning();
 
         fruitVarietyCount = data.fruits.Length;
         zeroVector = new Vector3(0, 0, 0);
@@ -27,9 +25,13 @@ public class FruitGenerator : MonoBehaviour
         stageDimensions = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, Z_POSITION));
 
         yPositionOfBasketTop = data.basket.transform.position.y + data.basket.GetComponent<BoxCollider2D>().size.y;
+
+        Fruit.OnFruitCollectedEvent += CountDecrease;
+        GameManager.OnWinEvent += CancelInvoke;
+        GameManager.OnRestartEvent += InvokeSpawning;
     }
 
-    void SelectFruitToSpawn()
+    void SelectAndSpawnFruit()
     {
         int fruitNumber = Random.Range(0, fruitVarietyCount);
         spawnPos = FindSpawnPosition();
@@ -38,17 +40,11 @@ public class FruitGenerator : MonoBehaviour
 
     private void Spawn(int fruitNumber,Vector3 spawnPos)
     {
-        if (GameManager.instance.generatedFruitCount < data.maxFruitsToSpawn)
+        if (generatedFruitCount < data.maxFruitsToSpawn)
         {
-            var _fruit=Instantiate(data.fruits[fruitNumber], spawnPos, Quaternion.identity);
-            _fruit.GetComponent<Fruit>().OnFruitCollectedEvent += OnFruitCollected;
-            GameManager.instance.CountIncrease();
+            Instantiate(data.fruits[fruitNumber], spawnPos, Quaternion.identity);
+            CountIncrease();
         }
-    }
-
-    private void OnFruitCollected()
-    {
-        GameManager.instance.AddFruit();
     }
 
     public Vector3 FindSpawnPosition()
@@ -57,6 +53,21 @@ public class FruitGenerator : MonoBehaviour
         float yPosition = Random.Range(-Mathf.Abs(stageDimensions.y) + yPositionOfBasketTop + data.distanceFromBasketTop, Mathf.Abs(stageDimensions.y) - data.minDistanceFromBorders);
         spawnPos = new Vector3(xPosition, yPosition, Z_POSITION);
         return spawnPos;
+    }
+
+    private void CountDecrease()
+    {
+        generatedFruitCount--;
+    }
+
+    private void CountIncrease()
+    {
+        generatedFruitCount++;
+    }
+
+    private void InvokeSpawning()
+    {
+        InvokeRepeating(nameof(SelectAndSpawnFruit), startTime, data.spawnRate);
     }
 
 }
