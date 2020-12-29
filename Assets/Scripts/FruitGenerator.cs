@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class FruitGenerator : MonoBehaviour
 {
@@ -13,9 +14,13 @@ public class FruitGenerator : MonoBehaviour
     private Vector3 stageDimensions;
     private Vector3 zeroVector;
     private float yPositionOfBasketTop;
+    private int fruitCount;
+
+    public static event Action<int> FruitsCollected;
 
     void Start()
     {
+        fruitCount = 0;
         startTime = 0;
         InvokeSpawning();
 
@@ -31,9 +36,16 @@ public class FruitGenerator : MonoBehaviour
         GameManager.OnRestartEvent += InvokeSpawning;
     }
 
+    private void OnDestroy()
+    {
+        Fruit.OnFruitCollectedEvent -= CountDecrease;
+        GameManager.OnWinEvent -= CancelInvoke;
+        GameManager.OnRestartEvent -= InvokeSpawning;
+    }
+
     void SelectAndSpawnFruit()
     {
-        int fruitNumber = Random.Range(0, fruitVarietyCount);
+        int fruitNumber = UnityEngine.Random.Range(0, fruitVarietyCount);
         spawnPos = FindSpawnPosition();
         Spawn(fruitNumber,spawnPos);
     }
@@ -49,14 +61,16 @@ public class FruitGenerator : MonoBehaviour
 
     public Vector3 FindSpawnPosition()
     {
-        float xPosition = Random.Range(-Mathf.Abs(stageDimensions.x) + data.minDistanceFromBorders, Mathf.Abs(stageDimensions.x) - data.minDistanceFromBorders);
-        float yPosition = Random.Range(-Mathf.Abs(stageDimensions.y) + yPositionOfBasketTop + data.distanceFromBasketTop, Mathf.Abs(stageDimensions.y) - data.minDistanceFromBorders);
+        float xPosition = UnityEngine.Random.Range(-Mathf.Abs(stageDimensions.x) + data.minDistanceFromBorders, Mathf.Abs(stageDimensions.x) - data.minDistanceFromBorders);
+        float yPosition = UnityEngine.Random.Range(-Mathf.Abs(stageDimensions.y) + yPositionOfBasketTop + data.distanceFromBasketTop, Mathf.Abs(stageDimensions.y) - data.minDistanceFromBorders);
         spawnPos = new Vector3(xPosition, yPosition, Z_POSITION);
         return spawnPos;
     }
 
     private void CountDecrease()
     {
+        fruitCount++;
+        FruitsCollected?.Invoke(fruitCount);
         generatedFruitCount--;
     }
 

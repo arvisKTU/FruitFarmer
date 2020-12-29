@@ -4,6 +4,7 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
+    public GeneratorData settings;
     public static GameObject[] baskets;
     public static bool gameEnded;
     public static event Action OnWinEvent;
@@ -11,15 +12,25 @@ public class GameManager : MonoBehaviour
 
     public GameObject[] assignedBaskets;
 
-    private GameManager instance;
-    private const string MAIN_SCENE  = "FruitFarmer";
-
     private void Start()
     {
         DontDestroyOnLoad(gameObject);
         baskets = assignedBaskets;
         gameEnded = false;
-        UI.OnEnoughFruitsCollectedEvent += EndGame;
+        FruitGenerator.FruitsCollected += EndGameIfEnoughFruitsCollected;
+    }
+
+    private void OnDestroy()
+    {
+        FruitGenerator.FruitsCollected -= EndGameIfEnoughFruitsCollected;
+    }
+
+    private void EndGameIfEnoughFruitsCollected(int fruitCount)
+    {
+        if(fruitCount >= settings.maxFruits)
+        {
+            EndGame();
+        }
     }
 
     public void EndGame()

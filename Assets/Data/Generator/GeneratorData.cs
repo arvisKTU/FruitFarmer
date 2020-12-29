@@ -12,4 +12,5 @@ public class GeneratorData : ScriptableObject
     public float spawnRate;
     public int maxFruitsToSpawn;
     public float distanceFromBasketTop;
+    public float maxFruits;
 }

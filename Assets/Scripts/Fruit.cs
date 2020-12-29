@@ -3,46 +3,46 @@ using UnityEngine;
 
 public class Fruit : MonoBehaviour
 {
+
     public FruitData data;
+    private const float PARTICLE_DELAY_TIME = 1f;
+    private const float RETURN_TIME         = 1f;
+    private const float MAX_VELOCITY        = 100f;
+    private const float RESIZE_TIME = 1f;
 
     private Vector3 screenPoint;
     private Camera mainCamera;
     private bool isDragging;
     private Vector3 initialPos;
     private bool fruitInCorrectBasket;
-    private float scaleChangeSpeed;
-    private float currentShrinkScale;
-    private float currentExpandScale;
     private Vector3 initialScale;
+    private Vector3 zeroVector;
     private bool isMaximized;
-    private float currTime;
-    private float returnTime;
     private Vector3 offset;
-    private float maxVelocity;
+    private bool returnFruit;
     private bool wentOutsideBasket;
-
+    private float timeFromLastParticle;
     public static event Action OnFruitCollectedEvent;
 
     private void Start()
     {
+        returnFruit = false;
+        zeroVector = new Vector3(0, 0, 0);
+        timeFromLastParticle = MAX_VELOCITY;
         wentOutsideBasket = true;
-        returnTime = 1f;
-        maxVelocity = 100f;
         fruitInCorrectBasket = false;
         isMaximized = false;
-        scaleChangeSpeed = 0.02f;
         initialPos = transform.position;
         mainCamera = Camera.main;
         initialScale = transform.localScale;
+        transform.localScale = zeroVector;
     }
 
     private void Update()
     {
-        if (isDragging)
-        {
-            currTime = 0;
-        }
-        else if(!fruitInCorrectBasket)
+        timeFromLastParticle += Time.deltaTime;
+
+        if(!fruitInCorrectBasket && returnFruit)
         {
             ReturnToStartPos();
         }
@@ -78,12 +78,17 @@ public class Fruit : MonoBehaviour
             screenPoint = mainCamera.WorldToScreenPoint(gameObject.transform.position);
             offset = gameObject.transform.position - mainCamera.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, screenPoint.z));
 
-            Instantiate(data.fruitClickParticles, transform.position, Quaternion.identity);
+            if (timeFromLastParticle >= PARTICLE_DELAY_TIME)
+            {
+                Instantiate(data.fruitClickParticles, transform.position, Quaternion.identity);
+                timeFromLastParticle = 0;
+            }
         }
     }
 
     private void OnMouseUp()
     {
+        returnFruit = true;
         isDragging = false;
         if (IsFruitInDefinedBasket(data.correctBasket)&& !fruitInCorrectBasket)
         {
@@ -112,37 +117,23 @@ public class Fruit : MonoBehaviour
 
     private void ReturnToStartPos()
     {
+        LeanTween.move(gameObject, initialPos, RETURN_TIME).setEase(data.returnFruitToInitialPos).setOnComplete(DisableFruitReturn);
+    }
 
-        Vector3 _currPos = transform.position;
-        currTime += Time.deltaTime;
-        float _fraction = currTime / returnTime;
-        float _velocity = data.returnFruitToInitialPos.Evaluate(_fraction) / maxVelocity;
-        _currPos = Vector3.Lerp(_currPos, initialPos, _velocity);
-        transform.position = _currPos;
-
+    private void DisableFruitReturn()
+    {
+        returnFruit = false;
     }
 
     private void ShrinkFruit()
     {
-        currentShrinkScale += scaleChangeSpeed;
-        transform.localScale = new Vector3(initialScale.x- currentShrinkScale, initialScale.y - currentShrinkScale, initialScale.z - currentShrinkScale);
-        if (transform.localScale.x <= 0)
-        {
-            Destroy(this.gameObject);
-        }
+        LeanTween.scale(gameObject, zeroVector, RESIZE_TIME).setOnComplete(DestroyFruit);
     }
 
     private void ExpandFruit()
     {
-        if (currentExpandScale<initialScale.x)
-        {
-            currentExpandScale += scaleChangeSpeed;
-            transform.localScale = new Vector3(currentExpandScale, currentExpandScale, currentExpandScale);
-        }
-        else
-        {
-            isMaximized = true;
-        }
+        LeanTween.scale(gameObject, initialScale, RESIZE_TIME);
+        isMaximized = true;
     }
 
     private bool IsFruitInAnyBasket()
@@ -165,5 +156,10 @@ public class Fruit : MonoBehaviour
         {
             return false;
         }
+    }
+
+    void DestroyFruit()
+    {
+        Destroy(gameObject);
     }
 }

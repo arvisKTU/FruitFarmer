@@ -449,10 +449,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 48fdbe9d6b4ae104cab8d977278b8709, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  settings: {fileID: 11400000, guid: 4d5a2750ae0c2fe41a91de5eee8a2a83, type: 2}
   mask: {fileID: 274271586}
   progressBar: {fileID: 168931819}
   winMenu: {fileID: 1129745244}
-  maxFruits: 10
   restartButton: {fileID: 1045243763}
   restart: {fileID: 1045243764}
 --- !u!1 &1136565942
@@ -571,6 +571,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a79c753c45b7f04ebec901979a5e1e1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  settings: {fileID: 11400000, guid: 4d5a2750ae0c2fe41a91de5eee8a2a83, type: 2}
   assignedBaskets:
   - {fileID: 1459908808}
   - {fileID: 1271952537}

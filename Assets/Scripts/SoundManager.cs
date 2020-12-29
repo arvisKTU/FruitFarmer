@@ -23,6 +23,13 @@ public class SoundManager : MonoBehaviour
         GameManager.OnRestartEvent += audioSrc.Play;
     }
 
+    private void OnDestroy()
+    {
+        GameManager.OnWinEvent -= HandleWin;
+        Fruit.OnFruitCollectedEvent -= PlayCollectedFruitSound;
+        GameManager.OnRestartEvent -= audioSrc.Play;
+    }
+
     private void HandleWin()
     {
         PlaySound(LEVEL_COMPLETED_CLIP_NAME);

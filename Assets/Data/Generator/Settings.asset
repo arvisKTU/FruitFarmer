@@ -21,3 +21,4 @@ MonoBehaviour:
   spawnRate: 1
   maxFruitsToSpawn: 50
   distanceFromBasketTop: 5.5
+  maxFruits: 10
